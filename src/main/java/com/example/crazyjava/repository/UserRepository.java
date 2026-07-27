@@ -14,8 +14,20 @@ public class UserRepository {
 
     @Autowired
     private UserMapper userMapper;
+
     public List<User> findAll(){
         return userMapper.findAll();
+    }
+    public User findById(long id){
+        return userMapper.findById(id);
+    }
+    public int setById(User user){
+        return userMapper.setById(user);
+    }
+
+    // ========== 新增：删除用户 ==========
+    public int deleteById(Long id) {
+        return userMapper.deleteById(id);
     }
 
     public void save(User user) {

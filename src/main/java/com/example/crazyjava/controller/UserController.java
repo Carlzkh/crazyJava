@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -30,8 +31,33 @@ public class UserController {
         return Result.success(result);
     }
 
+
+    @GetMapping("/{id}")
+    public Result<User> getUserById(@PathVariable long id){
+        log.info("Controller 层：根据 ID 查询用户: {}", id);
+        User user = userService.getUserById(id);
+        return Result.success(user);
+    }
+
+    @PutMapping("/{id}")
+    public Result<User> setUserById(@PathVariable Long id, @Valid @RequestBody User user){
+        log.info("Controller 层：根据 ID 查询用户: {}", id);
+        User newUser = userService.setUserById(id,user);
+        return Result.success(newUser);
+    }
+
+
+    // ========== 新增：删除用户 ==========
+    @DeleteMapping("/{id}")
+    public Result<Void> deleteUser(@PathVariable Long id) {
+        log.info("Controller 层：删除用户 ID: {}", id);
+        userService.deleteUserById(id);
+        return Result.success("用户删除成功", null);
+    }
+
+
     @PostMapping
-    public Result<User> createUser(@RequestBody User user){
+    public Result<User> createUser(@Valid @RequestBody User user){
         log.info("新增user的入参 {}",user);
         User newUser = userService.createUser(user);
         log.info("新增成功{}",newUser);
