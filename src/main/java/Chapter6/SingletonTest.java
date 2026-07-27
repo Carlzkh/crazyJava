@@ -1,6 +1,7 @@
 package Chapter6;
 
 @SuppressWarnings("InstantiationOfUtilityClass")
+// 单例类，一个类只能创建一个实例
 class Singleton {
     private static volatile Singleton instance;
 

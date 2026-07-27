@@ -10,6 +10,6 @@ public class FloatTest {
         System.out.println(c==d); // 负无穷大相等
         System.out.println(a/a); // 0.0除以0.0得到NaN
         System.out.println(a/a==Float.NaN); // NaN 不等于 NaN
-        System.out.println(6.0/0==555.0/0); // 正无穷相等，浮点数除以0得到无穷大，整数除以0会报错
+        System.out.println(6.0/0.0==555.0/0.0); // 正无穷相等，浮点数除以0得到无穷大，整数除以0会报错
 
     }}
