@@ -18,6 +18,10 @@ public class UserRepository {
     public List<User> findAll(){
         return userMapper.findAll();
     }
+    public List<User> findByName(String name){
+        return userMapper.findByName(name);
+    }
+
     public User findById(long id){
         return userMapper.findById(id);
     }

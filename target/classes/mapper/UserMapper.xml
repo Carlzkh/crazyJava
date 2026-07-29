@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.crazyjava.mapper.UserMapper">
+
+    <!-- ===== 查询所有用户 ===== -->
+    <select id="findAll" resultType="com.example.crazyjava.entity.User">
+        SELECT * FROM user
+    </select>
+
+    <!-- ===== 根据 ID 查询用户 ===== -->
+    <select id="findById" resultType="com.example.crazyjava.entity.User">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <!-- ===== 按姓名模糊查询（支持动态条件） ===== -->
+    <select id="findByName" resultType="com.example.crazyjava.entity.User">
+        SELECT * FROM user
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- ===== 插入用户 ===== -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user(name, age) VALUES(#{name}, #{age})
+    </insert>
+
+    <!-- ===== 更新用户 ===== -->
+    <update id="update">
+        UPDATE user
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="age != null">
+                age = #{age},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- ===== 删除用户 ===== -->
+    <delete id="deleteById">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+</mapper>

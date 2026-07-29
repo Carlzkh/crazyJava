@@ -31,10 +31,7 @@ public class Result<T> {
 
     // ===== 失败响应 =====
     public static <T> Result<T> error(String msg) {
-        Result<T> result = new Result<>();
-        result.setCode(500);
-        result.setMsg(msg);
-        return result;
+        return error(500,msg);
     }
 
     public static <T> Result<T> error(Integer code, String msg) {
