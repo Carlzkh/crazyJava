@@ -106,4 +106,25 @@ public class UserService {
         log.info("Service 层：查询到 {} 条数据，总记录数: {}", userList.size(), pageInfo.getTotal());
         return pageInfo;
     }
+
+    public List<User> searchByName(String name){
+        return userRepository.findByName(name);
+    }
+    public List<User> searchByAge(int minAge,int maxAge){
+        return userRepository.findByAge(minAge, maxAge);
+    }
+    // 综合搜索：名字 + 年龄范围
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge) {
+        log.info("Service 层：综合搜索，name={}, minAge={}, maxAge={}", name, minAge, maxAge);
+
+        // 参数预处理（可选）
+        // 如果 name 是空字符串，转为 null（让 Mapper 的 <if> 判断更干净）
+        String cleanName = StringUtils.hasText(name) ? name.trim() : null;
+
+        // 调用 Repository
+        List<User> users = userRepository.searchUsers(cleanName, minAge, maxAge);
+
+        log.info("Service 层：搜索到 {} 条数据", users.size());
+        return users;
+    }
 }

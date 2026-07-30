@@ -21,6 +21,13 @@ public class UserRepository {
     public List<User> findByName(String name){
         return userMapper.findByName(name);
     }
+    public List<User> findByAge(int minAge,int maxAge){
+        return userMapper.findByAge(minAge, maxAge);
+    }
+
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge) {
+        return userMapper.searchUsers(name, minAge, maxAge);
+    }
 
     public User findById(long id){
         return userMapper.findById(id);

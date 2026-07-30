@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -41,6 +42,19 @@ public class UserController {
         log.info("Controller 层：根据 ID 查询用户: {}", id);
         User user = userService.getUserById(id);
         return Result.success(user);
+    }
+
+    @GetMapping("/search")
+    public Result<List<User>> searchUsers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge){
+        log.info("Controller 层：综合搜索，name={}, minAge={}, maxAge={}", name, minAge, maxAge);
+        if(minAge != null && maxAge!=null && minAge>maxAge){
+            return Result.error(400,"最小年龄不能大于最大年龄");
+        }
+        List<User> users = userService.searchUsers(name,minAge,maxAge);
+        return Result.success(users);
     }
 
     @PutMapping("/{id}")

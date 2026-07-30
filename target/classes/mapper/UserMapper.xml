@@ -25,6 +25,46 @@
         </where>
     </select>
 
+    <!-- ===== 按年龄范围查询（支持动态条件） =====
+    在 XML 文件中，< 和 > 是特殊字符，会被 XML 解析器误认为是标签的开始或结束，所以不能直接使用。
+    符号      转义写法
+    >       &gt;
+    >=      &gt;=
+    <       &lt;
+    <=      &lt;=
+    &	    &amp;
+    "	    &quot;
+    '	    &apos;
+    -->
+
+    <select id="findByAge" resultType="com.example.crazyjava.entity.User">
+        SELECT * FROM user
+        <where>
+            <if test="minAge != null and minAge != ''">
+                AND age &gt; #{minAge}
+            </if>
+            <if test="maxAge != null and maxAge != ''">
+                AND age &lt; #{maxAge}
+            </if>
+        </where>
+    </select>
+
+    <select id="searchUsers" resultType="com.example.crazyjava.entity.User">
+        SELECT * FROM user
+        <where>
+            <if test="name != null and name != ''">
+                AND name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="minAge != null">
+                AND age &gt;= #{minAge}
+            </if>
+            <if test="maxAge != null">
+                AND age &lt;= #{maxAge}
+            </if>
+        </where>
+        ORDER BY id DESC
+    </select>
+
     <!-- ===== 插入用户 ===== -->
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user(name, age) VALUES(#{name}, #{age})
