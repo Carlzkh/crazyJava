@@ -25,13 +25,17 @@ public class UserRepository {
         return userMapper.findByAge(minAge, maxAge);
     }
 
-    public List<User> searchUsers(String name, Integer minAge, Integer maxAge) {
-        return userMapper.searchUsers(name, minAge, maxAge);
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge,String gender) {
+        return userMapper.searchUsers(name, minAge, maxAge,gender);
     }
 
     public User findById(long id){
         return userMapper.findById(id);
     }
+    public User findById_(long id){
+        return userMapper.findById_(id);
+    }
+
     public int setById(User user){
         return userMapper.setById(user);
     }

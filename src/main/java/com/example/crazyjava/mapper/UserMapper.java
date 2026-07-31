@@ -11,12 +11,16 @@ public interface UserMapper {
     List<User> findAll();
 
     User findById(long id);
+    User findById_(long id);
 
     List<User> findByName(@Param("name") String name);
 
-    List<User> findByAge(@Param("minAge") int minAge,@Param("maxAge") int maxAge);
+    List<User> findByAge(@Param("minAge") int minAge, @Param("maxAge") int maxAge);
 
-    List<User> searchUsers(@Param("name") String name,@Param("minAge") Integer minAge,@Param("maxAge") Integer maxAge);
+    List<User> searchUsers(@Param("name") String name,
+                           @Param("minAge") Integer minAge,
+                           @Param("maxAge") Integer maxAge,
+                           @Param("gender") String gender);
 
     int setById(User user);
 

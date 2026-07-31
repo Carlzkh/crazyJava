@@ -41,6 +41,7 @@ public class UserService {
         // 2. 更新数据
         user.setName(updatedUser.getName());
         user.setAge(updatedUser.getAge());
+        user.setGender(updatedUser.getGender());
 
         // 3. 执行更新
         int row = userRepository.setById(user);
@@ -55,10 +56,15 @@ public class UserService {
         log.info("Service 层：删除用户 ID: {}", id);
 
         // 1. 检查用户是否存在
-        User user = userRepository.findById(id);
+        User user = userRepository.findById_(id);
         if (user == null) {
             log.warn("Service 层：用户 ID {} 不存在", id);
             throw new BusinessException(404, "用户不存在，ID：" + id);
+        }
+        User user1=userRepository.findById(id);
+        if(user1==null){
+            log.warn("Service 层：用户 ID {} 存在", id);
+            throw new BusinessException(400, "用户已被删除，ID：" + id);
         }
 
         // 2. 执行删除
@@ -114,7 +120,7 @@ public class UserService {
         return userRepository.findByAge(minAge, maxAge);
     }
     // 综合搜索：名字 + 年龄范围
-    public List<User> searchUsers(String name, Integer minAge, Integer maxAge) {
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge,String gender) {
         log.info("Service 层：综合搜索，name={}, minAge={}, maxAge={}", name, minAge, maxAge);
 
         // 参数预处理（可选）
@@ -122,7 +128,7 @@ public class UserService {
         String cleanName = StringUtils.hasText(name) ? name.trim() : null;
 
         // 调用 Repository
-        List<User> users = userRepository.searchUsers(cleanName, minAge, maxAge);
+        List<User> users = userRepository.searchUsers(cleanName, minAge, maxAge,gender);
 
         log.info("Service 层：搜索到 {} 条数据", users.size());
         return users;

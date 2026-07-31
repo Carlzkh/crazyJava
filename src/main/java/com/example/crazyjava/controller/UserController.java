@@ -5,6 +5,7 @@ import com.example.crazyjava.common.PageResult;
 import com.example.crazyjava.common.Result;
 import com.example.crazyjava.entity.User;
 import com.example.crazyjava.service.UserService;
+import com.fasterxml.jackson.databind.exc.ValueInstantiationException;
 import com.github.pagehelper.PageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,18 +49,24 @@ public class UserController {
     public Result<List<User>> searchUsers(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer minAge,
-            @RequestParam(required = false) Integer maxAge){
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) String gender){
         log.info("Controller 层：综合搜索，name={}, minAge={}, maxAge={}", name, minAge, maxAge);
         if(minAge != null && maxAge!=null && minAge>maxAge){
             return Result.error(400,"最小年龄不能大于最大年龄");
         }
-        List<User> users = userService.searchUsers(name,minAge,maxAge);
+        // 可选校验：gender 只能是 male / female
+        if (gender != null && !"male".equals(gender) && !"female".equals(gender)) {
+            return Result.error(400, "gender 参数只能是 male 或 female");
+        }
+        List<User> users = userService.searchUsers(name,minAge,maxAge,gender);
         return Result.success(users);
     }
 
     @PutMapping("/{id}")
     public Result<User> setUserById(@PathVariable Long id, @Valid @RequestBody User user) {
         log.info("Controller 层：根据 ID 查询用户: {}", id);
+
         User newUser = userService.setUserById(id, user);
         return Result.success(newUser);
     }
@@ -80,6 +87,8 @@ public class UserController {
         User newUser = userService.createUser(user);
         log.info("新增成功{}", newUser);
         return Result.success("创建用户成功", newUser);
+
+
     }
 
 }
