@@ -1,6 +1,7 @@
 package com.example.crazyjava.repository;
 
 
+import com.example.crazyjava.Gender;
 import com.example.crazyjava.entity.User;
 import com.example.crazyjava.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class UserRepository {
         return userMapper.findByAge(minAge, maxAge);
     }
 
-    public List<User> searchUsers(String name, Integer minAge, Integer maxAge,String gender) {
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge, Gender gender) {
         return userMapper.searchUsers(name, minAge, maxAge,gender);
     }
 

@@ -66,6 +66,9 @@
             <if test="maxAge != null">
                 AND age &lt;= #{maxAge}
             </if>
+            <if test="gender != null">
+                AND gender = #{gender}
+            </if>
             and is_deleted=0
         </where>
         ORDER BY id DESC

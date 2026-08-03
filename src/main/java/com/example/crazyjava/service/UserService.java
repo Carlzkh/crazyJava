@@ -1,6 +1,7 @@
 package com.example.crazyjava.service;
 
 
+import com.example.crazyjava.Gender;
 import com.example.crazyjava.common.exception.BusinessException;
 import com.example.crazyjava.entity.User;
 import com.example.crazyjava.repository.UserRepository;
@@ -120,8 +121,8 @@ public class UserService {
         return userRepository.findByAge(minAge, maxAge);
     }
     // 综合搜索：名字 + 年龄范围
-    public List<User> searchUsers(String name, Integer minAge, Integer maxAge,String gender) {
-        log.info("Service 层：综合搜索，name={}, minAge={}, maxAge={}", name, minAge, maxAge);
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge, Gender gender) {
+        log.info("Service 层：综合搜索，name={}, minAge={}, maxAge={}, gender={}", name, minAge, maxAge, gender);
 
         // 参数预处理（可选）
         // 如果 name 是空字符串，转为 null（让 Mapper 的 <if> 判断更干净）

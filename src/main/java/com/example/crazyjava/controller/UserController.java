@@ -1,6 +1,7 @@
 package com.example.crazyjava.controller;
 
 
+import com.example.crazyjava.Gender;
 import com.example.crazyjava.common.PageResult;
 import com.example.crazyjava.common.Result;
 import com.example.crazyjava.entity.User;
@@ -50,15 +51,12 @@ public class UserController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer minAge,
             @RequestParam(required = false) Integer maxAge,
-            @RequestParam(required = false) String gender){
-        log.info("Controller 层：综合搜索，name={}, minAge={}, maxAge={}", name, minAge, maxAge);
+            @RequestParam(required = false) Gender gender){
+        log.info("Controller 层：综合搜索，name={}, minAge={}, maxAge={}, gender={}", name, minAge, maxAge, gender);
         if(minAge != null && maxAge!=null && minAge>maxAge){
             return Result.error(400,"最小年龄不能大于最大年龄");
         }
-        // 可选校验：gender 只能是 male / female
-        if (gender != null && !"male".equals(gender) && !"female".equals(gender)) {
-            return Result.error(400, "gender 参数只能是 male 或 female");
-        }
+        // gender 使用枚举 Gender，非法值由全局异常处理器统一返回 400
         List<User> users = userService.searchUsers(name,minAge,maxAge,gender);
         return Result.success(users);
     }

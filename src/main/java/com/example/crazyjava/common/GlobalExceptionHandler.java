@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @Slf4j
 @RestControllerAdvice
@@ -33,6 +34,21 @@ public class GlobalExceptionHandler {
         String errorMsg = fieldError != null ? fieldError.getDefaultMessage() : "参数校验失败";
         log.warn("参数校验失败: {}", errorMsg);
         return Result.error(400, errorMsg);
+    }
+
+    /**
+     * 处理 @RequestParam 参数类型转换失败（如 gender 传入非法值）
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleTypeMismatch(MethodArgumentTypeMismatchException e) {
+        Throwable root = e;
+        while (root.getCause() != null) {
+            root = root.getCause();
+        }
+        String msg = root.getMessage() != null ? root.getMessage() : e.getMessage();
+        log.warn("参数类型转换失败: 参数={}, 信息={}", e.getName(), msg);
+        return Result.error(400, "参数 " + e.getName() + " 不合法: " + msg);
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.example.crazyjava.mapper;
 
 
+import com.example.crazyjava.Gender;
 import com.example.crazyjava.entity.User;
 import org.apache.ibatis.annotations.*;
 
@@ -20,7 +21,7 @@ public interface UserMapper {
     List<User> searchUsers(@Param("name") String name,
                            @Param("minAge") Integer minAge,
                            @Param("maxAge") Integer maxAge,
-                           @Param("gender") String gender);
+                           @Param("gender") Gender gender);
 
     int setById(User user);
 
