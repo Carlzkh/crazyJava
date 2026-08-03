@@ -9,11 +9,10 @@ import java.lang.reflect.Type;
 /**
  * Fastjson 反序列化器：把 JSON 中的 gender 转成 {@link Gender}。
  * 兼容两种写法：
- * - 数字 code：0 -> MALE，1 -> FEMALE（复用 Gender.fromCode）；
+ * - 数字 code：1 -> MALE，0 -> FEMALE（复用 Gender.fromCode）；
  * - 字符串：MALE/FEMALE，大小写不敏感（复用 Gender.fromValue）。
  *
- * 生效方式：Gender 上的 @JSONType(deserializeUsing=...) 指向本类，
- * 同时在 WebMvcConfig 里用 ParserConfig 全局注册一次（双保险）。
+ * 生效方式：在 WebMvcConfig 里用 ParserConfig 全局注册一次。
  */
 public class GenderDeserializer implements ObjectDeserializer {
 
@@ -25,7 +24,7 @@ public class GenderDeserializer implements ObjectDeserializer {
             return null;
         }
         if (value instanceof Number) {
-            // 数字 code：0 -> MALE, 1 -> FEMALE
+            // 数字 code：1 -> MALE, 0 -> FEMALE
             return (T) Gender.fromCode(((Number) value).intValue());
         }
         String text = value.toString().trim();

@@ -1,8 +1,10 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializeConfig;
 import com.example.crazyjava.Gender;
 import com.example.crazyjava.entity.User;
 import com.example.crazyjava.json.GenderDeserializer;
+import com.example.crazyjava.json.GenderSerializer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -11,13 +13,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 验证 Fastjson 对 Gender 的反/序列化行为。
- * 其中 "male"(小写) -> MALE 是 Fastjson 默认做不到的，能证明 GenderDeserializer 确实生效。
+ * - 反序列化："male"(小写) -> MALE 是 Fastjson 默认做不到的，证明 GenderDeserializer 生效；
+ * - 序列化：固定输出小写 "male"/"female"（而非枚举名 MALE/FEMALE），证明 GenderSerializer 生效；
+ *   且序列化后再反序列化可还原（请求/响应对称、不泄漏枚举名）。
  */
 public class FastjsonGenderTest {
 
     @BeforeAll
     static void register() {
         ParserConfig.getGlobalInstance().putDeserializer(Gender.class, new GenderDeserializer());
+        SerializeConfig.getGlobalInstance().put(Gender.class, new GenderSerializer());
     }
 
     @Test
@@ -38,7 +43,19 @@ public class FastjsonGenderTest {
     void serializeByName() {
         User u = new User();
         u.setGender(Gender.FEMALE);
-        String json = JSON.toJSONString(u);
-        assertTrue(json.contains("\"gender\":\"FEMALE\""), json);
+        assertTrue(JSON.toJSONString(u).contains("\"gender\":\"female\""));
+        u.setGender(Gender.MALE);
+        assertTrue(JSON.toJSONString(u).contains("\"gender\":\"male\""));
+    }
+
+    @Test
+    void roundTrip() {
+        // 序列化(POJO 字段)出小写串，再反序列化回来，应得到同一枚举（请求/响应对称、不泄漏枚举名）
+        for (Gender g : Gender.values()) {
+            User u = new User();
+            u.setGender(g);
+            String json = JSON.toJSONString(u);
+            assertEquals(g, JSON.parseObject(json, User.class).getGender());
+        }
     }
 }
