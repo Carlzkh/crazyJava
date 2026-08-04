@@ -12,8 +12,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.List;
+
+import static org.apache.commons.lang3.StringEscapeUtils.escapeCsv;
 
 
 @RestController
@@ -96,6 +102,55 @@ public class UserController {
         return Result.success("创建用户成功", newUser);
 
 
+    }
+
+    @GetMapping("/export")
+    public void exportUsers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer minAge,
+            @RequestParam(required = false) Integer maxAge,
+            @RequestParam(required = false) Gender gender,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            HttpServletResponse response) throws IOException {
+
+        log.info("Controller 层：导出用户数据，参数：name={}, minAge={}, maxAge={}, gender={}, startDate={}, endDate={}",
+                name, minAge, maxAge, gender, startDate, endDate);
+
+        // 1. 查询数据（复用 search 逻辑）
+        List<User> users = userService.searchUsers(name, minAge, maxAge, gender, startDate, endDate);
+
+        // 2. 设置响应头，告诉浏览器这是一个 CSV 文件
+        response.setContentType("text/csv;charset=UTF-8");
+        response.setHeader("Content-Disposition","attachment; filename=users_" + LocalDate.now() + ".csv");
+
+        // 3. 写入 CSV 内容
+        try (PrintWriter writer = response.getWriter()) {
+            // 写入 CSV 表头
+            writer.println("ID,姓名,年龄,性别,创建时间,更新时间");
+
+            // 写入数据行
+            for (User user : users) {
+                String line = String.format("%d,%s,%d,%s,%s,%s",
+                        user.getId(),
+                        escapeCsv(user.getName()),
+                        user.getAge(),
+                        user.getGender() != null ? user.getGender().name() : "",
+                        user.getCreateTime() != null ? user.getCreateTime().toString() : "",
+                        user.getUpdateTime() != null ? user.getUpdateTime().toString() : ""
+                );
+                writer.println(line);
+            }
+        }
+
+        log.info("Controller 层：导出完成，共 {} 条数据", users.size());
+    }
+    private String escapeCsv(String value) {
+        if (value == null) return "";
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
     }
 
 }

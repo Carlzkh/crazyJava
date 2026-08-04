@@ -77,7 +77,7 @@
             </if>
             and is_deleted=0
         </where>
-        ORDER BY id DESC
+        ORDER BY id ASC
     </select>
 
     <!-- ===== 插入用户 ===== -->
