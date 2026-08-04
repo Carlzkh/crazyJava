@@ -50,13 +50,15 @@ public class UserController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer minAge,
             @RequestParam(required = false) Integer maxAge,
-            @RequestParam(required = false) Gender gender){
-        log.info("Controller 层：综合搜索，name={}, minAge={}, maxAge={}, gender={}", name, minAge, maxAge, gender);
+            @RequestParam(required = false) Gender gender,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate){
+        log.info("Controller 层：综合搜索，name={}, minAge={}, maxAge={}, gender={}, startDate={}, endDate={}", name, minAge, maxAge, gender,startDate,endDate);
         if(minAge != null && maxAge!=null && minAge>maxAge){
             return Result.error(400,"最小年龄不能大于最大年龄");
         }
         // gender 使用枚举 Gender，非法值由全局异常处理器统一返回 400
-        List<User> users = userService.searchUsers(name,minAge,maxAge,gender);
+        List<User> users = userService.searchUsers(name,minAge,maxAge,gender,startDate,endDate);
         return Result.success(users);
     }
 

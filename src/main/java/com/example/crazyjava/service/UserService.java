@@ -63,8 +63,8 @@ public class UserService {
             log.warn("Service 层：用户 ID {} 不存在", id);
             throw new BusinessException(404, "用户不存在，ID：" + id);
         }
-        User user1=userRepository.findById(id);
-        if(user1==null){
+        User user1 = userRepository.findById(id);
+        if (user1 == null) {
             log.warn("Service 层：用户 ID {} 存在", id);
             throw new BusinessException(400, "用户已被删除，ID：" + id);
         }
@@ -124,22 +124,24 @@ public class UserService {
         return pageInfo;
     }
 
-    public List<User> searchByName(String name){
+    public List<User> searchByName(String name) {
         return userRepository.findByName(name);
     }
-    public List<User> searchByAge(int minAge,int maxAge){
+
+    public List<User> searchByAge(int minAge, int maxAge) {
         return userRepository.findByAge(minAge, maxAge);
     }
+
     // 综合搜索：名字 + 年龄范围
-    public List<User> searchUsers(String name, Integer minAge, Integer maxAge, Gender gender) {
-        log.info("Service 层：综合搜索，name={}, minAge={}, maxAge={}, gender={}", name, minAge, maxAge, gender);
+    public List<User> searchUsers(String name, Integer minAge, Integer maxAge, Gender gender, String startDate, String endDate) {
+        log.info("Service 层：综合搜索，name={}, minAge={}, maxAge={}, gender={}, startDate={}, endDate={}", name, minAge, maxAge, gender, startDate, endDate);
 
         // 参数预处理（可选）
         // 如果 name 是空字符串，转为 null（让 Mapper 的 <if> 判断更干净）
         String cleanName = StringUtils.hasText(name) ? name.trim() : null;
 
         // 调用 Repository
-        List<User> users = userRepository.searchUsers(cleanName, minAge, maxAge,gender);
+        List<User> users = userRepository.searchUsers(cleanName, minAge, maxAge, gender,startDate,endDate);
 
         log.info("Service 层：搜索到 {} 条数据", users.size());
         return users;

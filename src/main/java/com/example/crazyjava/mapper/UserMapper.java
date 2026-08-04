@@ -21,7 +21,9 @@ public interface UserMapper {
     List<User> searchUsers(@Param("name") String name,
                            @Param("minAge") Integer minAge,
                            @Param("maxAge") Integer maxAge,
-                           @Param("gender") Gender gender);
+                           @Param("gender") Gender gender,
+                           @Param("startDate") String startDate,
+                           @Param("endDate") String endDate);
 
     int setById(User user);
 

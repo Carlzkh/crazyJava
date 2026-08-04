@@ -69,6 +69,12 @@
             <if test="gender != null">
                 AND gender = #{gender}
             </if>
+            <if test="startDate != null and startDate != ''">
+                AND create_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null and endDate != ''">
+                AND create_time &lt;= #{endDate}
+            </if>
             and is_deleted=0
         </where>
         ORDER BY id DESC
