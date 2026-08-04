@@ -27,6 +27,7 @@ public interface UserMapper {
 
     // ========== 新增：删除用户 ==========
     int deleteById(Long id);
+    int deleteByIds(@Param("ids") List<Long> ids);
 
 
     @Options(useGeneratedKeys = true, keyProperty = "id")

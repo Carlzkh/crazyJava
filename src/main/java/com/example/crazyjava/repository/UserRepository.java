@@ -45,6 +45,10 @@ public class UserRepository {
     public int deleteById(Long id) {
         return userMapper.deleteById(id);
     }
+    public int deleteByIds(List<Long> ids) {
+         return userMapper.deleteByIds(ids);
+    }
+
 
     public void save(User user) {
         userMapper.insert(user);

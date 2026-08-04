@@ -51,6 +51,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 1. 创建一个 FastJsonConfig 配置对象
         FastJsonConfig fastJsonConfig = new FastJsonConfig();
+        //converter.setCharset(Charset.forName("UTF-8"));'setCharset(java.nio.charset.Charset)' is deprecated
 
         // 2. 在配置对象中设置字符集为 UTF-8
         fastJsonConfig.setCharset(StandardCharsets.UTF_8);
@@ -61,6 +62,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
         // 4. 将配置对象设置到消息转换器中
         converter.setFastJsonConfig(fastJsonConfig);
+        //converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));'APPLICATION_JSON_UTF8' is deprecated
         converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
         converters.add(0, converter);
     }

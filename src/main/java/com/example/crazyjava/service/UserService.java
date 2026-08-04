@@ -11,6 +11,7 @@ import com.github.pagehelper.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
@@ -74,6 +75,15 @@ public class UserService {
             throw new BusinessException(500, "删除失败，请重试");
         }
         log.info("Service 层：用户 ID {} 删除成功", id);
+    }
+
+    @Transactional
+    public int deleteUsersByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new BusinessException(400, "用户ID列表不能为空");
+        }
+        log.info("Service 层：批量删除用户，ids={}", ids);
+        return userRepository.deleteByIds(ids);
     }
 
     public User createUser(User user) {

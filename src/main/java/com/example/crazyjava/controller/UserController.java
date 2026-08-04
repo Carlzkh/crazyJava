@@ -68,6 +68,12 @@ public class UserController {
         return Result.success(newUser);
     }
 
+    @DeleteMapping("/batch")
+    public Result<Integer> deleteUserBatch(@RequestBody List<Long> ids) {
+        log.info("Controller 层：删除用户 ID: {}", ids);
+        int deletedCount = userService.deleteUsersByIds(ids);
+        return Result.success("成功删除 " + deletedCount + " 个用户", deletedCount);
+    }
 
     // ========== 新增：删除用户 ==========
     @DeleteMapping("/{id}")
@@ -76,6 +82,8 @@ public class UserController {
         userService.deleteUserById(id);
         return Result.success("用户删除成功", null);
     }
+
+
 
 
     @PostMapping
