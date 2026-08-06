@@ -7,11 +7,11 @@ import com.example.crazyjava.common.Result;
 import com.example.crazyjava.entity.User;
 import com.example.crazyjava.service.UserService;
 import com.github.pagehelper.PageInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -19,14 +19,14 @@ import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.apache.commons.lang3.StringEscapeUtils.escapeCsv;
 
-
+@Tag("用户管理")
 @RestController
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
 
-    private static final Logger log = LoggerFactory.getLogger(UserController.class);
+    //private static final Logger log = LoggerFactory.getLogger(UserController.class);使用注解@Slf4j
 
     @Autowired
     private UserService userService;
@@ -50,7 +50,7 @@ public class UserController {
         User user = userService.getUserById(id);
         return Result.success(user);
     }
-
+    @Operation(summary = "查询用户列表（分页 + 多条件搜索）")
     @GetMapping("/search")
     public Result<List<User>> searchUsers(
             @RequestParam(required = false) String name,
