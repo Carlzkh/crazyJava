@@ -1,0 +1,36 @@
+# ===== IntelliJ IDEA =====
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# ===== 其他 IDE =====
+.settings/
+.project
+.classpath
+.factorypath
+.vscode/
+
+# ===== Maven 构建产物 =====
+target/
+out/
+*.class
+
+# ===== 打包产物（如以后需提交本地私有 jar，可加 !lib/ 例外）=====
+*.jar
+*.war
+*.ear
+
+# ===== 日志与临时文件 =====
+*.log
+logs/
+*.tmp
+*.swp
+*~
+*.bak
+*.orig
+
+# ===== 操作系统文件 =====
+.DS_Store
+Thumbs.db
+desktop.ini
