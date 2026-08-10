@@ -2,8 +2,9 @@ package com.example.crazyjava.service;
 
 
 import com.example.crazyjava.Gender;
-import com.example.crazyjava.common.exception.BusinessException;
+import com.example.crazyjava.exception.BusinessException;
 import com.example.crazyjava.entity.User;
+import com.example.crazyjava.enums.ResultCodeEnum;
 import com.example.crazyjava.repository.UserRepository;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -60,19 +61,18 @@ public class UserService {
         // 1. 检查用户是否存在
         User user = userRepository.findById_(id);
         if (user == null) {
-            log.warn("Service 层：用户 ID {} 不存在", id);
-            throw new BusinessException(404, "用户不存在，ID：" + id);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         User user1 = userRepository.findById(id);
         if (user1 == null) {
             log.warn("Service 层：用户 ID {} 存在", id);
-            throw new BusinessException(400, "用户已被删除，ID：" + id);
+            throw new BusinessException(ResultCodeEnum.USER_AlREADY_DELETED);
         }
 
         // 2. 执行删除
         int rows = userRepository.deleteById(id);
         if (rows == 0) {
-            throw new BusinessException(500, "删除失败，请重试");
+            throw new BusinessException(ResultCodeEnum.USER_DELETE_FAILED);
         }
         log.info("Service 层：用户 ID {} 删除成功", id);
     }
@@ -80,7 +80,7 @@ public class UserService {
     @Transactional
     public int deleteUsersByIds(List<Long> ids) {
         if (ids == null || ids.isEmpty()) {
-            throw new BusinessException(400, "用户ID列表不能为空");
+            throw new BusinessException(ResultCodeEnum.PARAM_IS_BLANK);
         }
         log.info("Service 层：批量删除用户，ids={}", ids);
         return userRepository.deleteByIds(ids);

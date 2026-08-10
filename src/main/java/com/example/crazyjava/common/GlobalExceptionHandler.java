@@ -1,6 +1,7 @@
 package com.example.crazyjava.common;
 
-import com.example.crazyjava.common.exception.BusinessException;
+import com.example.crazyjava.enums.ResultCodeEnum;
+import com.example.crazyjava.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -20,7 +21,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public Result<Void> handleBusinessException(BusinessException e) {
-        log.warn("业务异常: code={}, message={}", e.getCode(), e.getMessage());
+        log.warn("业务异常: code={}, message={}", e.getCode(), e.getMsg());
         return Result.error(e.getCode(), e.getMessage());
     }
 
@@ -33,7 +34,7 @@ public class GlobalExceptionHandler {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String errorMsg = fieldError != null ? fieldError.getDefaultMessage() : "参数校验失败";
         log.warn("参数校验失败: {}", errorMsg);
-        return Result.error(400, errorMsg);
+        return Result.error(ResultCodeEnum.PARAM_IS_INVALID.getCode(), errorMsg);
     }
 
     /**
@@ -58,7 +59,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<Void> handleRuntimeException(RuntimeException e) {
         log.error("运行时异常: {}", e.getMessage(), e);
-        return Result.error(500, "系统内部错误，请稍后重试");
+        return Result.error(ResultCodeEnum.SYSTEM_ERROR);
     }
 
     /**
@@ -68,6 +69,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<Void> handleException(Exception e) {
         log.error("系统异常: {}", e.getMessage(), e);
-        return Result.error(500, "系统内部错误，请稍后重试");
+        return Result.error(ResultCodeEnum.SYSTEM_ERROR);
+
     }
 }
