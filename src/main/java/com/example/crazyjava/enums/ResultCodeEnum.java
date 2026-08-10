@@ -24,8 +24,9 @@ public enum ResultCodeEnum {
     PARAM_IS_NULL(40002, "参数为null"),
     PARAM_TYPE_ERROR(40003, "参数类型错误"),
     DATE_RANGE_INVALID(40004, "开始日期不能大于结束日期"),
-    GENDER_INVALID(40005, "性别只能传 MALE 或 FEMALE"),
-    IDS_EMPTY(40006, "用户ID列表不能为空"),
+    GENDER_INVALID_VALUE(40005, "性别只能传 MALE 或 FEMALE"),
+    GENDER_INVALID(40006, "性别只能传 0 或 1"),
+    IDS_EMPTY(40007, "用户ID列表不能为空"),
 
     // ===== 业务错误 60000-60999 =====
     USER_NOT_FOUND(60000, "用户不存在"),
