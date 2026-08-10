@@ -10,11 +10,13 @@ import lombok.Data;
 public class User {
     private Long id;
 
-    @NotBlank(message="姓名不能为空")
+    @NotNull(message = "{user.name.notnull}")
+    @Size(min = 1, max = 50, message = "姓名长度必须在1-50之间")
     private String name;
 
-    @NotNull(message = "年龄不能为空")
-    @Min(value = 0,message = "年龄不能小于0")
+    @NotNull(message = "{user.age.notnull}")
+    @Min(value = 0, message = "{user.age.min}")
+    @Max(value = 150, message = "{user.age.max}")
     private Integer age;
 
 
