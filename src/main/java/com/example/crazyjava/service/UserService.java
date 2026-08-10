@@ -28,8 +28,7 @@ public class UserService {
     public User getUserById(long id) {
         User user = userRepository.findById(id);
         if (user == null) {
-            log.warn("用户不存在在，id为{}", id);
-            throw new BusinessException(404, "用户不存在，ID：" + id);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         log.info("查到用户：{}", user);
         return user;
@@ -38,8 +37,7 @@ public class UserService {
     public User setUserById(long id, User updatedUser) {
         User user = userRepository.findById(id);
         if (user == null) {
-            log.warn("用户不存在在，id为{}", id);
-            throw new BusinessException(404, "用户不存在，ID：" + id);
+            throw new BusinessException(ResultCodeEnum.USER_NOT_FOUND);
         }
         // 2. 更新数据
         user.setName(updatedUser.getName());
@@ -119,9 +117,7 @@ public class UserService {
         } else {
             userList = userRepository.findAll();
         }
-        PageInfo<User> pageInfo = new PageInfo<>(userList);
-        log.info("Service 层：查询到 {} 条数据，总记录数: {}", userList.size(), pageInfo.getTotal());
-        return pageInfo;
+        return new PageInfo<>(userList);
     }
 
     public List<User> searchByName(String name) {
