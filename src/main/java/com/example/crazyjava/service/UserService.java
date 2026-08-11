@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
 
@@ -141,5 +141,52 @@ public class UserService {
 
         log.info("Service 层：搜索到 {} 条数据", users.size());
         return users;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public User createUserWithLog(User user) {
+        // 1. 保存用户
+        userRepository.save(user);
+        log.info("用户保存成功，ID: {}", user.getId());
+
+         //2. 记录操作日志（假设这里调用日志 Mapper）
+         //userLogMapper.insertLog(user.getId(), "CREATE");
+
+         ///3. 模拟异常，测试事务是否回滚
+         //如果这里抛出异常，上面的保存操作会回滚，不会写入数据库
+         int i = 1 / 0;  // 取消注释测试回滚
+
+        return user;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void testTransaction(Long id) {
+        // 1. 删除用户
+        userRepository.deleteById(id);
+        log.info("用户 ID {} 已删除", id);
+
+        // 2. 模拟异常（事务应该回滚，用户不会被删除）
+        if (true) {
+            throw new RuntimeException("模拟异常，事务应回滚");
+        }
+    }
+
+
+    @PostConstruct
+    public void testTransaction() {
+        log.info("========== 事务测试开始 ==========");
+        try {
+            // 假设删除 ID=1 的用户
+            userRepository.deleteById(1L);
+            log.info("用户已删除");
+
+            // 模拟异常，触发回滚
+            if (true) {
+                throw new RuntimeException("模拟异常，事务回滚");
+            }
+        } catch (Exception e) {
+            log.error("事务测试失败，已回滚: {}", e.getMessage());
+        }
+        log.info("========== 事务测试结束 ==========");
     }
 }

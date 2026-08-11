@@ -153,4 +153,16 @@ public class UserController {
         return value;
     }
 
+    //测试事务回滚接口
+    @PostMapping("/test-tx")
+    public Result<String> testTransaction(@RequestParam Long id){
+        try{
+            userService.testTransaction(id);
+            return Result.success("事务测试执行成功（但可能被回滚了）");
+        }catch (Exception e){
+            return Result.error(500, "事务测试执行失败: " + e.getMessage());
+        }
+
+    }
+
 }
