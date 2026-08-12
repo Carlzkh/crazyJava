@@ -36,7 +36,7 @@ public class LogAspect {
         HttpServletRequest request = attributes.getRequest();
 
         // 打印请求日志
-        log.info("=========================================");
+        log.info("==========================================");
         log.info("请求 URL   : {}", request.getRequestURL());
         log.info("请求方法   : {}", request.getMethod());
         log.info("请求 IP    : {}", request.getRemoteAddr());
