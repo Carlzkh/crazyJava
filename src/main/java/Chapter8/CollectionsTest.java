@@ -38,12 +38,15 @@ public class CollectionsTest {
 
         //8.便捷方法
         List<Integer> numbers2 = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        System.out.println(numbers2);
 
         // 删除所有偶数
         numbers2.removeIf(n -> n % 2 == 0); // [1, 3, 5]
+        System.out.println(numbers2);
 
         // 把所有元素乘以 2
         numbers2.replaceAll(n -> n * 2); // [2, 6, 10]
+        System.out.println(numbers2);
 
     }
 }
