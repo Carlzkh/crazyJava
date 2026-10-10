@@ -34,6 +34,7 @@ public enum ResultCodeEnum {
     USER_UPDATE_FAILED(60002, "更新用户失败"),
     USER_CREATE_FAILED(60003, "创建用户失败"),
     USER_AlREADY_DELETED(60004, "用户已经被删除"),
+    USER_AGE_TOO_YOUNG(60005, "用户未满18岁"),
 
     // ===== 系统错误 50000-50999 =====
     SYSTEM_ERROR(50000, "系统内部错误，请稍后重试"),

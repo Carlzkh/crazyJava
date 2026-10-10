@@ -10,6 +10,7 @@ import com.github.pagehelper.PageInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +38,9 @@ public class UserController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String name) {
+        log.info("是否是代理对象: {}", AopUtils.isAopProxy(this));
+        log.info("代理类型: {}", AopUtils.isCglibProxy(this) ? "CGLIB" : "JDK");
+        log.info("代理类: {}", this.getClass().getName());
         log.info("===== 访问了 /users 接口，当前时间：" + new java.util.Date() + " =====");
         log.info("Controller 层：分页查询，page={}, size={},name={}", page, size, name);
         PageInfo<User> pageInfo = userService.getUserListByPageAndName(page, size, name);

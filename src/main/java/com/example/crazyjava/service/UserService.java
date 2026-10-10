@@ -85,6 +85,9 @@ public class UserService {
     }
 
     public User createUser(User user) {
+        if(user.getAge()!=null && user.getAge()<18){
+            throw new BusinessException(ResultCodeEnum.USER_AGE_TOO_YOUNG);
+        }
         log.info("Service 层：收到新增用户请求，用户数据: {}", user);
         // 调用 Repository 保存用户
         userRepository.save(user);
