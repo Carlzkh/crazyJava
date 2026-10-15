@@ -13,8 +13,10 @@ import java.util.List;
 @Repository
 public class UserRepository {
 
-    @Autowired
-    private UserMapper userMapper;
+    public UserRepository(UserMapper userMapper){
+        this.userMapper = userMapper;
+    }
+    private final UserMapper userMapper;
 
     public List<User> findAll() {
         return userMapper.findAll();

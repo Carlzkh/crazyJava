@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,8 +23,23 @@ import java.util.List;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+
+    @PostConstruct
+    public void init() {
+        log.info("2. UserService @PostConstruct 被调用");
+    }
+
+    @PreDestroy
+    public void destroy() {
+        log.info("3. UserService @PreDestroy 被调用");
+    }
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        log.info("1. UserService 构造器被调用");
+    }
 
     public User getUserById(long id) {
         User user = userRepository.findById(id);
