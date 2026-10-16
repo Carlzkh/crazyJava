@@ -7,12 +7,14 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.example.crazyjava.Gender;
 import com.example.crazyjava.json.GenderDeserializer;
 import com.example.crazyjava.json.GenderSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.nio.charset.Charset;
@@ -88,5 +90,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 return Gender.fromValue(value);
             }
         }
+    }
+
+    @Autowired
+    private RequestLogInterceptor requestLogInterceptor;
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry){
+        registry.addInterceptor(requestLogInterceptor).addPathPatterns("/api/**");
     }
 }
