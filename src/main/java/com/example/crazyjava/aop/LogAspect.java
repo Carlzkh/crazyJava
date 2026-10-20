@@ -9,6 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -65,7 +66,15 @@ public class LogAspect {
             if (arg instanceof HttpServletRequest || arg instanceof HttpServletResponse) {
                 continue;
             }
-            return JSON.toJSONString(arg);
+            if (arg instanceof MultipartFile) {
+                MultipartFile file = (MultipartFile) arg;
+                return "文件名=" + file.getOriginalFilename() + ", 大小=" + file.getSize();
+            }
+            try {
+                return JSON.toJSONString(arg);
+            } catch (Exception e) {
+                return String.valueOf(arg);
+            }
         }
         return "";
     }
