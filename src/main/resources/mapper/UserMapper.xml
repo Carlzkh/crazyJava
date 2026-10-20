@@ -114,4 +114,27 @@
          and is_deleted=0
     </update>
 
+    <resultMap id="userWithAddresses" type="com.example.crazyjava.entity.User">
+        <id property="id" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <collection property="addresses" ofType="com.example.crazyjava.entity.Address">
+            <id property="id" column="address_id"/>
+            <result property="userId" column="user_id"/>
+            <result property="city" column="city"/>
+            <result property="detail" column="detail"/>
+        </collection>
+    </resultMap>
+
+    <select id="findByIdWithAddresses" resultMap="userWithAddresses">
+        SELECT u.id AS user_id, u.name, u.age, u.gender, u.create_time, u.update_time,
+        a.id AS address_id, a.city, a.detail
+        FROM user u
+        LEFT JOIN address a ON a.user_id = u.id
+        WHERE u.id = #{id} AND u.is_deleted = 0
+    </select>
+
 </mapper>

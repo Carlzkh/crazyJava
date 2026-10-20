@@ -2,6 +2,7 @@ package com.example.crazyjava.entity;
 
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.example.crazyjava.Gender;
 import lombok.Data;
@@ -23,4 +24,5 @@ public class User {
     private Gender gender;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+    private List<Address> addresses;
 }

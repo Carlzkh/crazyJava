@@ -208,4 +208,8 @@ public class UserService {
         }
         log.info("========== 事务测试结束 ==========");
     }
+
+    public User getUserWithAddresses(long id) {
+        return userRepository.getUserWithAddresses(id);
+    }
 }

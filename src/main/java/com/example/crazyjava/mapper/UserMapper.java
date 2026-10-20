@@ -34,4 +34,5 @@ public interface UserMapper {
 
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(User user);
+    User findByIdWithAddresses(long id);
 }

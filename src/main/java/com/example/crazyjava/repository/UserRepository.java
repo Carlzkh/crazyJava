@@ -59,4 +59,8 @@ public class UserRepository {
     public void save(User user) {
         userMapper.insert(user);
     }
+
+    public User getUserWithAddresses(long id) {
+        return userMapper.findByIdWithAddresses(id);
+    }
 }

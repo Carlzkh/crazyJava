@@ -169,4 +169,9 @@ public class UserController {
 
     }
 
+    @GetMapping("/{id}/addresses")
+    public Result<User> getUserWithAddresses(@PathVariable long id) {
+        return Result.success(userService.getUserWithAddresses(id));
+    }
+
 }
