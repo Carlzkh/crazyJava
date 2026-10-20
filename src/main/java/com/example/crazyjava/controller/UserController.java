@@ -174,4 +174,14 @@ public class UserController {
         return Result.success(userService.getUserWithAddresses(id));
     }
 
+    @PostMapping("/test-tx-self")
+    public Result<String> testTransactionBySelf(@RequestParam Long id) {
+        try {
+            userService.testTransactionBySelf(id);
+            return Result.success("事务测试执行成功");
+        } catch (Exception e) {
+            return Result.error(500, "事务测试执行失败: " + e.getMessage());
+        }
+    }
+
 }

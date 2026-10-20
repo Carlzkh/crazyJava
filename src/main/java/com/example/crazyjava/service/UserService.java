@@ -212,4 +212,7 @@ public class UserService {
     public User getUserWithAddresses(long id) {
         return userRepository.getUserWithAddresses(id);
     }
+    public void testTransactionBySelf(Long id) {
+        this.testTransaction(id);
+    }
 }
