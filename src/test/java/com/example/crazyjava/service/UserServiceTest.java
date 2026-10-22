@@ -60,4 +60,61 @@ class UserServiceTest {
         assertEquals(ResultCodeEnum.USER_NOT_FOUND.getCode(), exception.getCode());
         assertEquals(ResultCodeEnum.USER_NOT_FOUND.getMsg(), exception.getMsg());
     }
+    @Test
+    void createUser_shouldThrow_whenAgeUnder18() {
+        User user = new User();
+        user.setName("小明");
+        user.setAge(16);
+
+        BusinessException exception = assertThrows(BusinessException.class,
+                () -> userService.createUser(user));
+
+        assertEquals(ResultCodeEnum.USER_AGE_TOO_YOUNG.getCode(), exception.getCode());
+        verify(userRepository, never()).save(any());
+    }
+    @Test
+    void createUser_shouldSave_whenAgeIsAdult() {
+        User user = new User();
+        user.setName("张三");
+        user.setAge(20);
+
+        User result = userService.createUser(user);
+
+        assertSame(user, result);
+        verify(userRepository, times(1)).save(user);
+    }
+    @Test
+    void deleteUserById_shouldDelete_whenUserExists() {
+        long userId = 1L;
+        User user = new User();
+        user.setId(userId);
+        when(userRepository.findById_(userId)).thenReturn(user);
+        when(userRepository.findById(userId)).thenReturn(user);
+        when(userRepository.deleteById(userId)).thenReturn(1);
+
+        userService.deleteUserById(userId);
+
+        verify(userRepository, times(1)).deleteById(userId);
+    }
+    @Test
+    void setUserById_shouldUpdate_whenUserExists() {
+        long userId = 1L;
+        User existing = new User();
+        existing.setId(userId);
+        existing.setName("旧名字");
+        existing.setAge(20);
+
+        User incoming = new User();
+        incoming.setName("新名字");
+        incoming.setAge(30);
+
+        when(userRepository.findById(userId)).thenReturn(existing);
+        when(userRepository.setById(existing)).thenReturn(1);
+
+        User result = userService.setUserById(userId, incoming);
+
+        assertEquals("新名字", result.getName());
+        assertEquals(30, result.getAge());
+        verify(userRepository, times(1)).setById(existing);
+    }
 }

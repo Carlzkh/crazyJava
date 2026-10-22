@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 public class AppProperties {
     private String envName;
     private Integer pageSize;
+    private String loginUsername;
+    private String loginPassword;
 
     public String getEnvName() {
         return envName;
@@ -16,7 +18,19 @@ public class AppProperties {
     public void setEnvName(String envName) {
         this.envName = envName;
     }
+    public String getLoginUsername() {
+        return loginUsername;
+    }
 
+    public void setLoginUsername(String loginUsername) {
+        this.loginUsername = loginUsername;
+    }
+    public String getLoginPassword(){
+        return loginPassword;
+    }
+    public void setLoginPassword(String loginPassword){
+        this.loginPassword=loginPassword;
+    }
     public Integer getPageSize() {
         return pageSize;
     }

@@ -39,6 +39,7 @@ public enum ResultCodeEnum {
     // ===== 系统错误 50000-50999 =====
     SYSTEM_ERROR(50000, "系统内部错误，请稍后重试"),
     DB_ERROR(50001, "数据库异常"),
+    LOGIN_FAILED(50002, "登录异常")
     ;
 
     private final Integer code;
