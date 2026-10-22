@@ -1,6 +1,7 @@
 package com.example.crazyjava.aop;
 
 import com.alibaba.fastjson.JSON;
+import com.example.crazyjava.entity.LoginRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -69,6 +70,10 @@ public class LogAspect {
             if (arg instanceof MultipartFile) {
                 MultipartFile file = (MultipartFile) arg;
                 return "文件名=" + file.getOriginalFilename() + ", 大小=" + file.getSize();
+            }
+            if (arg instanceof LoginRequest) {
+                LoginRequest login = (LoginRequest) arg;
+                return "username=" + login.getUsername() + ", password=***";
             }
             try {
                 return JSON.toJSONString(arg);
