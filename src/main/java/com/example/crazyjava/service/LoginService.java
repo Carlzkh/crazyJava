@@ -30,4 +30,7 @@ public class LoginService {
         tokens.add(token);
         return token;
     }
+    public boolean isValid(String token) {
+        return token != null && tokens.contains(token);
+    }
 }
