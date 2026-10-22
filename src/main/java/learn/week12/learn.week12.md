@@ -1,6 +1,8 @@
 # 第 12 周：用 Redis 缓存按 id 查询的用户
 
-这一周的代码还没改。本机没有 Redis，用 winget 安装 Windows 版 Redis 8.10.2 时，安装包要从 GitHub 下载，下载失败，所以实验留到 Redis 能在 `localhost:6379` 启动之后再做。
+这一周的 Redis 代码还没改。本机没有 Redis，用 winget 安装 Windows 版 Redis 8.10.2 时，安装包要从 GitHub 下载，下载失败，所以缓存实验留到 Redis 能在 `localhost:6379` 启动之后再做。
+
+第 8 节之后是 Redis 实验搁置后继续学的内容：定时任务、异步方法、接口文档、日志文件。消息队列需要本机没有的中间件，先不写。
 
 对照的现有代码是 `UserService.getUserById`。它现在每次都调用 `userRepository.findById(id)`，没有缓存。
 
@@ -182,3 +184,79 @@ UPDATE user SET is_deleted = 0 WHERE id = 1;
 | 第 7 周 | 缓存的是 `findById` 的结果，不是带地址列表的那次查询 |
 | 第 9 周 | 测试里用假的 `StringRedisTemplate`，不要求本机真有 Redis |
 | 第 10、11 周 | 调用户接口要带 `Authorization`。token 仍在内存里，和 Redis 不是同一个存储 |
+
+## 8. 定时任务
+
+启动类上有 `@EnableScheduling` 之后，带 `@Scheduled` 的方法会按时间自己执行，不用接口调用。
+
+`LoginService.logTokenCount`：
+
+```java
+@Scheduled(fixedRate = 15000)
+public void logTokenCount() {
+    log.info("当前有效 token 数量: {}", tokens.size());
+}
+```
+
+`fixedRate = 15000` 表示上一轮开始 15 秒后开始下一轮。实验里两次日志是：
+
+| 时间 | 线程 | 内容 |
+|------|------|------|
+| `14:32:27` | `scheduling-1` | `当前有效 token 数量: 0` |
+| `14:32:42` | `scheduling-1` | `当前有效 token 数量: 1` |
+
+第一次还没有登录。第二次之前登录成功，集合里有了一串 token，所以数量变成 1。`scheduling-1` 不是处理 HTTP 的 `nio-8080-exec-...`。默认只有这一条线程跑定时任务，上一个任务没结束时，下一个会等它。程序关掉，任务也停。
+
+## 9. 异步方法
+
+`@EnableAsync` 也加在启动类上。`LoginAuditService.record` 标了 `@Async`，里面先睡 3 秒再打日志。`LoginService.login` 在 token 放进集合之后调用它，然后马上 `return`。
+
+必须从另一个类调用。在 `LoginAuditService` 里面写 `this.record()`，仍会在当前请求线程里执行，登录接口就要多等这 3 秒。这和事务那周同一个类里自己调用自己的现象一样。
+
+一次登录的实际时间：
+
+| 时间 | 线程 | 发生了什么 |
+|------|------|------------|
+| `14:46:28.626` | `nio-8080-exec-7` | 接口已经返回 token，切面记录耗时 1 毫秒 |
+| `14:46:31.639` | `task-2` | 「登录记录已写完」。大约晚 3 秒 |
+
+`task-2` 既不是请求线程，也不是 `scheduling-1`。调用方没有等 `Thread.sleep(3000)`。
+
+这次请求体里的密码也被 `LogAspect` 打进了日志。练习时能看到即可，正式的登录日志不要记录密码。
+
+## 10. 接口文档
+
+页面地址是 `http://localhost:8080/swagger-ui/index.html`。依赖是已经在 `pom.xml` 里的 `springdoc-openapi-ui`。这些注解不改变接口能不能调用，只改变文档里的分组和标题。
+
+| 类 | 注解 | 文档上的分组 |
+|----|------|----------------|
+| `UserController` | `@Tag(name = "用户管理")` | 用户管理 |
+| `LoginController` | `@Tag(name = "登录")`，方法上 `@Operation(summary = "登录并返回 token")` | 登录 |
+| `FileController` | `@Tag(name = "文件")`，方法上 `@Operation(summary = "上传一个文件，返回保存路径")` | 文件 |
+| `HelloController` | 没有文档用的 `@Tag` | `hello-controller`，用的是类名 |
+
+`UserController` 上曾经写过 `@Tag("用户管理")`，import 却是 `org.junit.jupiter.api.Tag`。那是测试标记，SpringDoc 不读。文档注解是 `io.swagger.v3.oas.annotations.tags.Tag`，并且要写 `name`。
+
+第一次打开页面报 `Unable to render this definition`，是因为 Fastjson 被放在消息转换器最前面。`/v3/api-docs` 的返回值已经是 OpenAPI JSON 的 `byte[]`，Fastjson 又序列化了一次，文档里就没有 `openapi` 版本号。现在 Fastjson 放在转换器列表最后，`byte[]` 先按原样写出，`Result` 仍由 Fastjson 写。
+
+用户接口要 token，页面上原来没有地方填请求头。`OpenApiConfig` 声明了一个名为 `Authorization` 的请求头。重启后右上角有 **Authorize**。先调登录接口，把返回的 UUID 贴进去，不要加 `Bearer`。之后从文档里试用户接口，会自动带上这个头。不点 Authorize，用户接口仍然是 `401`。
+
+## 11. 日志文件
+
+`@Slf4j` 只提供名为 `log` 的对象，写到哪里由 `src/main/resources/logback-spring.xml` 决定。
+
+| 名字 | 写到哪里 |
+|------|----------|
+| `CONSOLE` | IDEA 的控制台 |
+| `FILE` | 项目目录下的 `logs/crazyjava.log`。按天再切一份，历史文件只留 7 天 |
+
+`com.example.crazyjava` 的级别是 `INFO`。`DEBUG` 不会进这个文件。当前 `prod` 配置里的日志级别也是 `INFO`。两个 appender 都挂在 `root` 上，所以控制台和文件内容相同。
+
+登录一次后，`logs/crazyjava.log` 里有：
+
+```text
+15:10:15.474 INFO  [http-nio-8080-exec-1] ... 拦截器：POST /api/v1/login
+15:10:18.552 INFO  [task-1] ... 登录记录已写完，用户=admin，线程=task-1
+```
+
+文件会留在磁盘上。其中也包括请求体里的密码，所以这份日志不要当成可以随便传的记录。

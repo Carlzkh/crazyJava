@@ -5,6 +5,7 @@ import com.example.crazyjava.config.AppProperties;
 import com.example.crazyjava.enums.ResultCodeEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -18,16 +19,18 @@ public class LoginService {
     private final AppProperties appProperties;
     private final Set<String> tokens = ConcurrentHashMap.newKeySet();
     private final LoginAuditService loginAuditService;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public LoginService(AppProperties appProperties, LoginAuditService loginAuditService) {
+    public LoginService(AppProperties appProperties, LoginAuditService loginAuditService,PasswordEncoder passwordEncoder) {
         this.appProperties = appProperties;
         this.loginAuditService = loginAuditService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public String login(String username, String password) {
         if (!appProperties.getLoginUsername().equals(username)
-                || !appProperties.getLoginPassword().equals(password)) {
+                || !passwordEncoder.matches(password, appProperties.getLoginPassword())) {
             throw new BusinessException(ResultCodeEnum.LOGIN_FAILED);
         }
         String token = UUID.randomUUID().toString();
