@@ -3,8 +3,10 @@ package com.example.crazyjava;  // 包名换成你项目的实际包名
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
+@EnableScheduling
 public class CrazyJavaApplication {
 
     public static void main(String[] args) {

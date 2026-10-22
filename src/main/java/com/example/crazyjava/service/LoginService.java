@@ -4,6 +4,7 @@ import com.example.crazyjava.exception.BusinessException;
 import com.example.crazyjava.config.AppProperties;
 import com.example.crazyjava.enums.ResultCodeEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -32,5 +33,9 @@ public class LoginService {
     }
     public boolean isValid(String token) {
         return token != null && tokens.contains(token);
+    }
+    @Scheduled(fixedRate = 15000)
+    public void logTokenCount() {
+        log.info("当前有效 token 数量: {}", tokens.size());
     }
 }
