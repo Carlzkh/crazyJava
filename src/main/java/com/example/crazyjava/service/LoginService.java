@@ -17,9 +17,12 @@ public class LoginService {
 
     private final AppProperties appProperties;
     private final Set<String> tokens = ConcurrentHashMap.newKeySet();
+    private final LoginAuditService loginAuditService;
 
-    public LoginService(AppProperties appProperties) {
+
+    public LoginService(AppProperties appProperties, LoginAuditService loginAuditService) {
         this.appProperties = appProperties;
+        this.loginAuditService = loginAuditService;
     }
 
     public String login(String username, String password) {
@@ -29,6 +32,7 @@ public class LoginService {
         }
         String token = UUID.randomUUID().toString();
         tokens.add(token);
+        loginAuditService.record(username);
         return token;
     }
     public boolean isValid(String token) {
@@ -38,4 +42,7 @@ public class LoginService {
     public void logTokenCount() {
         log.info("当前有效 token 数量: {}", tokens.size());
     }
+
+
+
 }
