@@ -1,6 +1,8 @@
 package com.example.crazyjava.controller;
 
 import com.example.crazyjava.common.Result;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,10 +15,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+@Tag(name="文件")
 @RestController
 @RequestMapping("/api/${api.version}/files")
 public class FileController {
-
+    @Operation(summary = "上传文件，返回路径")
     @PostMapping("/upload")
     public Result<String> upload(@RequestParam("file") MultipartFile file) throws IOException {
         if (file.isEmpty()) {

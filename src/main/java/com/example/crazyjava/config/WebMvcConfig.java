@@ -47,9 +47,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         ParserConfig.getGlobalInstance().putDeserializer(Gender.class, new GenderDeserializer());
         // 全局注册 Gender 自定义序列化器（输出稳定小写串 male/female，不再泄漏枚举常量名）
         SerializeConfig.getGlobalInstance().put(Gender.class, new GenderSerializer());
-        // 用 Fastjson 替换默认的 JSON 消息转换器（放最前，优先处理 application/json）
-        // 注意：FastJsonHttpMessageConverter 默认字符集取系统默认（Windows 上常为 GBK），
-        // 不显式指定 UTF-8 会导致响应中文乱码。这里同时固定写出字符集与 Content-Type 的 charset。
+        // Fastjson 放在转换器列表最后。
+        // /v3/api-docs 的返回值已经是 OpenAPI JSON 的 byte[]。
+        // 若 Fastjson 排在最前，会把这段 byte[] 再序列化一次，文档里就没有 openapi 版本号。
+        // Result 等普通对象前面的转换器写不了，仍会落到 Fastjson。
+        // 字符集必须指定 UTF-8，否则 Windows 上中文会按系统默认编码写出。
         FastJsonHttpMessageConverter converter = new FastJsonHttpMessageConverter();
 
         // 1. 创建一个 FastJsonConfig 配置对象
@@ -67,7 +69,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         converter.setFastJsonConfig(fastJsonConfig);
         //converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON_UTF8));'APPLICATION_JSON_UTF8' is deprecated
         converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
-        converters.add(0, converter);
+        converters.add(converter);
     }
 
     /**

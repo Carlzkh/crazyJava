@@ -8,8 +8,9 @@ import com.example.crazyjava.entity.User;
 import com.example.crazyjava.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Tag;
+
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 
-@Tag("用户管理")
+@Tag(name = "用户管理")
 @RestController
 @RequestMapping("/api/${api.version}/users")
 @Slf4j
@@ -71,7 +72,7 @@ public class UserController {
         List<User> users = userService.searchUsers(name,minAge,maxAge,gender,startDate,endDate);
         return Result.success(users);
     }
-
+    @Operation(summary = "修改用户信息")
     @PutMapping("/{id}")
     public Result<User> setUserById(@PathVariable Long id, @Valid @RequestBody User user) {
         log.info("Controller 层：根据 ID 查询用户: {}", id);
